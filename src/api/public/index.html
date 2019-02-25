@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script> -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <style>
+            img {
+                height: 200px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- List group -->
+                <div class="col-3 list-group" role="tablist">
+                    <a v-for="a in apartments" class="list-group-item list-group-item-action" data-toggle="list" v-bind:href="'#_' + a.id" role="tab">
+                        <h5>{{a.apartment}} #{{a.unit}}</h5>
+                        <small>Price: {{a.price}} Floor: {{a.floor}}</small>
+                    </a>
+                </div>
+
+                <!-- Tab panes -->
+                <div class="col-9 tab-content">
+
+                    <div v-for="a in apartments" v-bind:id="'_' + a.id" class="tab-pane" role="tabpanel">
+                        <img v-bind:src="a.img">
+                    </div>
+
+                    <canvas id="chLine" height="100"></canvas>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            // Vue
+            var data = [
+                {
+                    id: 1,
+                    apartment: 'The Verge',
+                    unit: 'a1234',
+                    img: 'TheVerge_FloorPlans_The-Cusp1.svg',
+                    price: 2103,
+                    floor: 3,
+                    lease_dt: ["5/2", "5/3", "5/4"],
+                    lease_price: [
+                        {label: '3 Month', data: [2089, 2045, 2183],},
+                        {label: '4 Month', data: [2189, 2145],}
+                    ]
+                },
+                {
+                    id: 2,
+                    apartment: 'The Verge',
+                    unit: 'a5678',
+                    img: 'TheVerge_FloorPlans_The-Cusp1.svg',
+                    price: 2103,
+                    floor: 1,
+                    lease_dt: ["5/2", "5/3", "5/4", "5/5", "5/6", "5/7"],
+                    lease_price: [
+                        {label: '3 Month', data: [2089, 2045, 2183, 2003, 2189, 2092, 2134],},
+                        {label: '4 Month', data: [2189, 2145, 2183, 2103, 2189, 2192, 2134],}
+                    ]
+                },
+                {
+                    id: 3,
+                    apartment: 'Ava Pacific Beach',
+                    unit: 'abc123',
+                    img: '800.png',
+                    price: 2500,
+                    floor: 1,
+                    lease_dt: ["5/2", "5/3", "5/4", "5/5"],
+                    lease_price: [
+                        {label: '3 Month', data: [2089, 2045, 2183, 2003],},
+                        {label: '4 Month', data: [2189, 2145, 2183, 2103],},
+                        {label: '5 Month', data: [2189, 2145, 2183, 2103],}
+                    ]
+                },
+            ]
+
+            var app = new Vue({
+                el: '.container-fluid',
+                data: { apartments: data }
+            })
+        </script>
+
+        <script>
+            // Charts
+            var chLine = $("#chLine");
+            if (chLine) {
+                var price_chart = new Chart(chLine, {
+                    type: 'line',
+                    data: {
+                        labels: data[0]['lease_dt'],
+                        datasets: data[0]['lease_price'],
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: false
+                                }
+                            }]
+                        },
+                        elements: {
+                            line: {
+                                fill: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            $('.list-group-item').on('click', function(e) {
+                var $this = $(this);
+                
+                var id = $this.attr('href').replace('#', '').replace('_', '')
+                var lease = data.find(o => o.id === parseInt(id))
+
+                price_chart.config.data.labels = lease['lease_dt']
+                price_chart.config.data.datasets = lease['lease_price']
+                price_chart.update()
+            })
+        </script>
+
+    </body>
+
+</html>
