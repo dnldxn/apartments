@@ -22,29 +22,30 @@
 - ? for docker image storage
 - Drone (runs inside Kubernetes) for CI
 
-
 ## Scripts
 
-```bash
-# setup google cloud sdk
-wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-235.0.0-linux-x86_64.tar.gz
-wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.3-linux-amd64.tar.gz
+### Setup Google Cloud SDK and Helm on Cloud9
 
-tar -xzvf google-cloud-sdk-235.0.0-linux-x86_64.tar.gz
+```bash
+cd ~
+wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-236.0.0-linux-x86_64.tar.gz
+tar -xzvf google-cloud-sdk-236.0.0-linux-x86_64.tar.gz
+
+wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.3-linux-amd64.tar.gz
 tar -xzvf helm-v2.12.3-linux-amd64.tar.gz
 
 export PATH=$PATH:~/google-cloud-sdk/bin:~/linux-amd64
 
-# initialize the google cloud sdk
 gcloud config set project apartments-139902
 gcloud config set compute/zone us-west1-a
 gcloud components update
 gcloud components install kubectl
+gcloud auth login
+```
 
-# initialize helm
-helm init
+### Create k8s cluster
 
-# create k8s cluster
+```bash
 export CLUSTER_NAME=apartments
 
 gcloud container clusters create $CLUSTER_NAME \
@@ -71,24 +72,25 @@ gcloud container clusters delete $CLUSTER_NAME
 
 
 ```bash
+# setup kubectl to connect to the cluster
 gcloud container clusters get-credentials $CLUSTER_NAME
 
-kubectl create deployment apartments-api --image=gcr.io/hello-minikube-zero-install/hello-node
+# setup Helm's Tiller service account on the cluster
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+# kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+helm init --service-account tiller --upgrade
 
-kubectl get deployments
-kubectl get pods
+# test Tiller works
+helm list
+helm repo update
 
-kubectl expose deployment apartments-api --type=LoadBalancer --port=8080
-kubectl get services
-
-
-
-helm install --name nginx-ingress --namespace kube-system stable/nginx-ingress 
-helm install --name db stable/mongodb
+# install nginx-ingress controller
+helm install --name nginx-ingress stable/nginx-ingress
+helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
+helm delete nginx-ingress
 ```
 
-## Links
-
-https://itsilesia.com/kubernetes-for-poor/
-
-https://serverfault.com/questions/863569/kubernetes-can-i-avoid-using-the-gce-load-balancer-to-reduce-cost/869453#869453?newreg=8d728d4f3e474336b69e84c2a3994f5d
+```bash
+helm install --name db stable/mongodb
+```

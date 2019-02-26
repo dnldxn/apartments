@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apartments-api-deployment
+  labels:
+    app: apartments-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: apartments-api
+  template:
+    metadata:
+      labels:
+        app: apartments-api
+    spec:
+      containers:
+      - name: apartments-api
+        image: us.gcr.io/apartments-139902/apartments-api
+        ports:
+        - containerPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: apartments-api-svc
+spec:
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+    name: http
+  selector:
+    app: apartments-api
