@@ -2,14 +2,10 @@
 
 ## TODO
 
-- Get MongoDB working on k8s locally
-- Get website working on k8s locally
-  - Ingress
 - Fix scrapper to upsert new data
 - Get scrapper working on k8s
 - Schedule scrapper with kron
 - MongoDB data backup
-- Publish site on Google Cloud
 
 ## Components
 
@@ -61,15 +57,13 @@ gcloud container clusters create $CLUSTER_NAME \
 --username daniel \
 --password 1a2854Ufd3fg462B34
 
-gcloud container clusters list
-
-gcloud container clusters describe $CLUSTER_NAME
 
 gcloud container clusters resize $CLUSTER_NAME --size=0
 
 gcloud container clusters delete $CLUSTER_NAME
 ```
 
+### Setup Helm and a K8S Ingress on the cluster
 
 ```bash
 # setup kubectl to connect to the cluster
@@ -89,8 +83,4 @@ helm repo update
 helm install --name nginx-ingress stable/nginx-ingress
 helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
 helm delete nginx-ingress
-```
-
-```bash
-helm install --name db stable/mongodb
 ```

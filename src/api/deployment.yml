@@ -5,7 +5,7 @@ metadata:
   labels:
     app: apartments-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: apartments-api
@@ -19,6 +19,26 @@ spec:
         image: us.gcr.io/apartments-139902/apartments-api
         ports:
         - containerPort: 5000
+        env:
+          - name: DB_HOST
+            value: "db-mongodb.default.svc.cluster.local"
+          - name: DB_PORT
+            value: "27017"
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: mongodb-username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: mongodb-password
+          - name: DB_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: mongodb-database
 
 ---
 
