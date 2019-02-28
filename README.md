@@ -14,7 +14,7 @@
 - MongoDB for storing JSON listings
 - NodeJS for API and serving index.html
 - Github for VC
-- Helm for managing applications in K8s
+- Helm for managing applications in K8s (MongoDB and K8S Ingress)
 - ? for docker image storage
 - Drone (runs inside Kubernetes) for CI
 

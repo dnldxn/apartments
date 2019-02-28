@@ -19,13 +19,14 @@ helm delete --purge db
 kubectl run db-mongodb-client --rm --tty -i --restart='Never' --image bitnami/mongodb --command /bin/bash
 
 # from the container we can connect to the database
-mongo apartments --host db-mongodb -u dnldxn -p
+mongo apartmentDB --host db-mongodb -u apartmentUser -p
 mongo admin --host db-mongodb --authenticationDatabase admin -u root -p
 
 use apartments
 show users
-db.apartments.insertOne( { x: 1 } );
-db.apartments.count();
+db.test.insertOne( { x: 1 } );
+db.listings.count();
+db.listings.remove({});
 quit()
 ```
 

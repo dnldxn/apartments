@@ -28,7 +28,7 @@ var db;
 MongoClient.connect(url, {useNewUrlParser: true}, function(err, client) {
     if(err) throw err;
 
-    db = client.db('apartments');
+    db = client.db(DB_DATABASE);
 
     // Start the application after the database connection is ready
     app.listen(PORT, () => {
@@ -43,12 +43,16 @@ app.get('/ping', (req, res) => {
     res.send('pong');
 });
 
-app.get('/units', (req, res) => {
-    db.collection('apartments').countDocuments({}, (err, count) => {
-        if(err) {
-            res.send(`error: ${err}`)
-        } else {
-            res.send(`count: ${count}`)
-        }
+app.get('/listings_count', (req, res) => {
+    db.collection('listings').countDocuments({}, (err, result) => {
+        if (err) throw err;
+        res.send(`count: ${result}`);
+    });
+});
+
+app.get('/listings', (req, res) => {
+    db.collection('listings').find().toArray( (err, result) => {
+        if (err) throw err;
+        res.send(result);
     });
 });

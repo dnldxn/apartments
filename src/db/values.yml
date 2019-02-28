@@ -1,8 +1,8 @@
 usePassword: true
 existingSecret: db-secret
 
-mongodbUsername: dnldxn
-mongodbDatabase: apartments
+mongodbUsername: apartmentUser
+mongodbDatabase: apartmentDB
 
 mongodbSystemLogVerbosity: 0
 mongodbDisableSystemLog: true
