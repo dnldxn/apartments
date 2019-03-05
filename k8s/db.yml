@@ -34,7 +34,7 @@ replicaSet:
   useHostnames: true
 
 persistence:
-  enabled: false
-#   accessModes:
-#     - ReadWriteOnce
-#   size: 4Gi
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 4Gi

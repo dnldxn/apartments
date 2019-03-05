@@ -1,17 +1,5 @@
 # DB
 
-
-## Install
-
-```bash
-helm install --name db -f values.yml stable/mongodb
-
-# scaling not tested
-kubectl scale statefulset my-release-mongodb-secondary --replicas=3
-
-helm delete --purge db
-```
-
 ## Connect through command line
 
 ```bash

@@ -1,6 +1,5 @@
 # API
 
-
 ## Build Locally
 
 ```bash
@@ -33,13 +32,4 @@ gcloud builds submit --tag us.gcr.io/apartments-139902/apartments-api .
 
 # Clean up stored images to avoid recurring charges
 gcloud container images delete us.gcr.io/apartments-139902/apartments-api --force-delete-tags
-```
-
-
-## Deploy Image on k8s
-
-https://medium.com/@awkwardferny/getting-started-with-kubernetes-ingress-nginx-on-minikube-d75e58f52b6c
-
-```bash
-kubectl apply -f deployment.yml
 ```

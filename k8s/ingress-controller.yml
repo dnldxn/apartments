@@ -1,0 +1,32 @@
+controller:
+  kind: Deployment
+  
+  service:
+    type: ClusterIP
+    externalIPs: 
+      - 10.138.0.31
+
+  ## Use host ports 80 and 443
+#   daemonset:
+#     useHostPort: true
+
+  tolerations:
+    - key: "ingress"
+      operator: "Equal"
+      value: "true"
+      effect: "NoExecute"
+
+  nodeSelector:
+    ingress: "true"
+
+## Default 404 backend
+defaultBackend:
+
+  tolerations:
+    - key: "ingress"
+      operator: "Equal"
+      value: "true"
+      effect: "NoExecute"
+
+  nodeSelector:
+    ingress: "true"
