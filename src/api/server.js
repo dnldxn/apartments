@@ -2,6 +2,7 @@
 
 const express = require('express')
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 
 
 // Constants
@@ -26,33 +27,46 @@ var db;
 
 // Initialize DB Connection
 MongoClient.connect(url, {useNewUrlParser: true}, function(err, client) {
-    if(err) throw err;
+  if(err) throw err;
 
-    db = client.db(DB_DATABASE);
+  db = client.db(DB_DATABASE);
 
-    // Start the application after the database connection is ready
-    app.listen(PORT, () => {
-        console.log(`App listening on http://localhost:${PORT}`);
-    });
+  // Start the application after the database connection is ready
+  app.listen(PORT, () => {
+    console.log(`App listening on http://localhost:${PORT}`);
+  });
 });
 
 
 // Express Routes
 
 app.get('/ping', (req, res) => {
-    res.send('pong');
+  res.send('pong');
 });
 
 app.get('/listings_count', (req, res) => {
-    db.collection('listings').countDocuments({}, (err, result) => {
-        if (err) throw err;
-        res.send(`count: ${result}`);
-    });
+  db.collection('listings').countDocuments({}, (err, result) => {
+    if (err) throw err;
+    res.send(`count: ${result}`);
+  });
 });
 
 app.get('/listings', (req, res) => {
-    db.collection('listings').find().toArray( (err, result) => {
-        if (err) throw err;
-        res.send(result);
-    });
+  db.collection('listings').find()
+    .project({ _id: 1, apartment: 1, unit: 1 })
+    .sort({ apartment: 1, unit: 1 })
+    .toArray( (err, result) => {
+      if (err) throw err;
+      res.send(result);
+  });
+});
+
+app.get('/listings/:listingId', (req, res) => {
+  const listingId = new ObjectID(req.params.listingId);
+
+  db.collection('listings')
+    .findOne({'_id': listingId}, (err, result) => {
+      if (err) throw err;
+      res.send(result);
+  });
 });

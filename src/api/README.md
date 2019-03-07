@@ -1,5 +1,12 @@
 # API
 
+## Run Locally
+
+```bash
+npm install -g nodemon
+nodemon server.js
+```
+
 ## Build Locally
 
 ```bash

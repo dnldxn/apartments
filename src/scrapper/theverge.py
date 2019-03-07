@@ -46,25 +46,3 @@ for fp in FLOORPLANS:
 
 # Insert into database
 db.insert_results(APARTMENT, TODAY, listings)
-
-
-# db.insert_results(
-#     'Ava',
-#     '2019-01-03',
-#     [
-#         {
-#             'unit': 'abc',
-#             'terms': {
-#                 'price_1': '1',
-#                 'price_2': '1',
-#                 'price_3': '1'
-#             }
-#         },
-#         {
-#             'unit': 'def',
-#             'terms': {
-#                 'price_1': '3',
-#                 'price_2': '3'
-#             }
-#         },
-#     ])

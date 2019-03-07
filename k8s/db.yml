@@ -15,17 +15,6 @@ service:
   type: ClusterIP
   port: 27017
 
-  ## Specify the nodePort value for the LoadBalancer and NodePort service types.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-  ##
-  # nodePort:
-
-  ## Specify the loadBalancerIP value for LoadBalancer service types.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer
-  ##
-  # loadBalancerIP:
-
-
 ## Setting up replication
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb#setting-up-a-replication
 replicaSet:
