@@ -31,7 +31,7 @@ for fp in FLOORPLANS:
         data['floorplan'] = fp[0]
         data['unit'] = unit['data-unit']
         data['floor'] = -1
-        data['terms'] = {}
+        data['terms'] = []
         
         leases = unit.find_all('label')
         for lease in leases:
@@ -39,7 +39,7 @@ for fp in FLOORPLANS:
             length = r.group(1)
             price = int(r.group(2))
             
-            data['terms']['price_' + length] = price
+            data['terms'].append({'k': length, 'v': price})
         
         listings.append(data)
 

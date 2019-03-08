@@ -28,13 +28,16 @@ for fp in two_bedroom:
         data['floorplan'] = 'TODO'
         data['unit'] = a['apartmentNumber']
         data['floor'] = a['floor']
-        data['terms'] = {}
+        data['terms'] = []
 
         apartment_code = a['apartmentCode']
         url = 'https://www.avaloncommunities.com/california/san-diego-apartments/ava-pacific-beach/apartment/' + apartment_code
 
         r2 = get(url, timeout=20)
         soup = BeautifulSoup(r2.content, "html.parser")
+        
+        description_el = soup.find('div', {'class': 'description'})
+        data['size'] = int(re.search(r'(\d+) sq ft', description_el.text).group(1))
 
         leases = soup.find('div', {'class': 'terms'}).select('table')[0].findAll('tr')
         for lease in leases:
@@ -44,7 +47,7 @@ for fp in two_bedroom:
             length = re.sub('[^0-9]', '', td_elements[0].text)  # regex to remove all non-digits
             price = int(re.sub('[^0-9]', '',  td_elements[-1].text)) # regex to remove all non-digits
 
-            data['terms']['price_' + length] = price
+            data['terms'].append({'k': length, 'v': price})
 
 
         listings.append(data)

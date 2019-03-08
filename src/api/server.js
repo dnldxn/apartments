@@ -52,9 +52,11 @@ app.get('/listings_count', (req, res) => {
 });
 
 app.get('/listings', (req, res) => {
-  db.collection('listings').find()
-    .project({ _id: 1, apartment: 1, unit: 1 })
-    .sort({ apartment: 1, unit: 1 })
+  db.collection('test').aggregate([
+    { $sort: { "terms.scrape_date": -1 } },
+    { $addFields: { minPrice: { $arrayElemAt: [ "$terms", -1 ] } } },
+    { $addFields: { minPrice: { $min: "$minPrice.price.v" } } },
+  ]).sort({ apartment: 1, unit: 1 })
     .toArray( (err, result) => {
       if (err) throw err;
       res.send(result);
@@ -64,7 +66,7 @@ app.get('/listings', (req, res) => {
 app.get('/listings/:listingId', (req, res) => {
   const listingId = new ObjectID(req.params.listingId);
 
-  db.collection('listings')
+  db.collection('test')
     .findOne({'_id': listingId}, (err, result) => {
       if (err) throw err;
       res.send(result);

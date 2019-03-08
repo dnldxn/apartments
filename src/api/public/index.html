@@ -11,38 +11,46 @@
 
     <!-- Custom style -->
     <style>
+      .list-group {
+        max-height: 100vh;
+        overflow-y: auto;
+      }
       img {
-        height: 200px;
+        height: 900px;
       }
     </style>
   </head>
 
     <body>
 
-      <div class="row" id="app">
+      <div class="container-fluid">
+        <div class="row" id="app">
+            
+          <!-- List group -->
+          <div class="col-3">
+            <div class="list-group">
+              <a v-for="(a, index) in apartments"
+                class="list-group-item list-group-item-action"
+                v-bind:class="{ 'active': activeIndex === index }"
+                v-on:click="getApartment(a, index)"
+                href="#">
+                
+                <h5>{{a.apartment}} #{{a.unit}}</h5>
+                <small>Price: ${{a.minPrice}} Floor: {{a.floor}}</small>
+                
+              </a>
+            </div>
+          </div>
           
-        <!-- List group -->
-        <div class="col-3">
-          <div class="list-group">
-            <a v-for="(a, index) in apartments"
-              class="list-group-item list-group-item-action"
-              v-bind:class="{ 'active': activeIndex === index }"
-              v-on:click="getApartment(a, index)"
-              href="#">
-              
-              <h5>{{a.apartment}} #{{a.unit}}</h5>
-              <small>Price: {{a.price}} Floor: {{a.floor}}</small>
-              
-            </a>
+          <!-- Tab panes -->
+          <div class="col-9">
+            <img src="ava_pacific_beach_complex.png"></img>
+            <canvas id="priceChart" height="100"></canvas>
+            </ br></ br></ br></ br>
+            {{ activeApartment }}
           </div>
         </div>
-        
-        <!-- Tab panes -->
-        <div class="col-9">
-          <canvas id="priceChart" height="100"></canvas>
-          {{ activeApartment }}
-        </div>
-    </div>
+      </div>
 
 
     <!-- JavaScript -->

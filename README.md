@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Scrolling list
 - Add complex map
 - Add floor
 - Add min price to list

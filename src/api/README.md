@@ -40,3 +40,9 @@ gcloud builds submit --tag us.gcr.io/apartments-139902/apartments-api .
 # Clean up stored images to avoid recurring charges
 gcloud container images delete us.gcr.io/apartments-139902/apartments-api --force-delete-tags
 ```
+
+## Bundling
+
+```bash
+npm install -g parcel-bundler
+```

@@ -19,4 +19,10 @@ gcloud config set container/cluster $CLUSTER_NAME
 gcloud components update
 gcloud components install kubectl
 gcloud auth login
+
+# Update Python version (required for scrapper)
+sudo apt-get install python3.6
+
+# Update Node version 
+nvm i v11
 ```

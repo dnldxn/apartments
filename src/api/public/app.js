@@ -1,3 +1,13 @@
+// Helper Function
+function covertCurrencyString(value) {
+  return value.toLocaleString("en-US", { 
+    style:"currency",
+    currency:"USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  })
+}
+
 // Vue
 new Vue({
   el: '#app',
@@ -11,8 +21,12 @@ new Vue({
   },
   mounted () {
     axios.get('./listings')
-      .then(response => (this.apartments = response.data))
-      
+      .then(response => {
+        this.apartments = response.data;
+        
+        this.getApartment(this.apartments[0], 0);
+      })
+
     this.createChart("priceChart");
   },
   methods: {
@@ -22,14 +36,25 @@ new Vue({
       axios.get(`./listings/${apartment._id}`)
         .then(response => {
           this.activeApartment = response.data;
-          
+
           const terms = response.data.terms;
-          const labels = terms.map(x => x.scrape_dt);
-          const price10 = { label: '10', data: terms.map(x => x.price_10) }
-          const price11 = { label: '11', data: terms.map(x => x.price_11) }
-          const price12 = { label: '12', data: terms.map(x => x.price_12) }
+          const labels = terms.map(x => x.dt);
           
-          this.setData(labels, [price10, price11, price12]);
+          // collect the keys (term length) and prices (over time)
+          const datasets = {}
+          terms.forEach( (dt) => {
+            dt.price.forEach( (p) => {
+              if(!datasets[p.k]) datasets[p.k] = []
+              datasets[p.k].push(p.v);
+            })
+          });
+
+          const datasets2 = []
+          for (var term in datasets) {
+            datasets2.push( { "label": term, "data": datasets[term] } );
+          }
+
+          this.setData(labels, datasets2);
         });
     },
     createChart: function(chartId) {
@@ -43,11 +68,23 @@ new Vue({
           },
           scales: {
             yAxes: [{
-              ticks: { beginAtZero: false }
+              ticks: { 
+                beginAtZero: false,
+                callback: covertCurrencyString
+              }
             }]
           },
           elements: {
             line: { fill: false }
+          },
+          hover: {
+            mode: 'nearest',
+            intersect: false
+          },
+          tooltips: {
+            mode: 'nearest',
+            intersect: false,
+            callbacks: { label: (tooltipItems, data) =>  covertCurrencyString(tooltipItems.yLabel) }
           }
         }
       });

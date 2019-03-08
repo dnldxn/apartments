@@ -9,17 +9,9 @@ DB_PASSWORD = os.environ['DB_PASSWORD']
 
 client = MongoClient(DB_HOST, DB_PORT, username=DB_USERNAME, password=DB_PASSWORD, authSource=DB_DATABASE)
 
-# def insert_results(results):
+def insert_results(apartment, dt, listings):
     
-#     collection = client[DB_DATABASE]['listings']
-    
-#     db_result = collection.insert_many(results)
-#     print('Inserted {} records'.format(len(db_result.inserted_ids)))
-
-
-def insert_results(apartment, scrape_dt, listings):
-    
-    collection = client[DB_DATABASE]['listings']
+    collection = client[DB_DATABASE]['test']
 
     db_operations = []
     for listing in listings:
@@ -27,25 +19,26 @@ def insert_results(apartment, scrape_dt, listings):
         # apartment = r['apartment']
         unit = listing['unit']
         terms = listing['terms']
+        size = listing['size']
         
         # attempt "upsert" where document does not exist
         # do not alter the document if this is an update
         a = UpdateOne(
-            { 'apartment': apartment, 'unit': unit },
-            { '$setOnInsert': { 'terms': [{ 'scrape_dt': scrape_dt, **terms }] }},
+            { 'apartment': apartment, 'unit': unit},
+            { '$setOnInsert': { 'size': size, 'terms': [{ 'dt': dt, 'price': terms }] }},
             upsert = True
         )
         
-        # $push the element where "scrape_dt" does not exist
+        # $push the element where "dt" does not exist
         b = UpdateOne(
-            { 'apartment': apartment, 'unit': unit, 'terms.scrape_dt': { '$ne': scrape_dt } },
-            { '$push': { "terms": { 'scrape_dt': scrape_dt, **terms } }}
+            { 'apartment': apartment, 'unit': unit, 'terms.dt': { '$ne': dt } },
+            { '$push': { "terms": { 'dt': dt, 'price': terms } }}
         )
         
-        # $set the element where "scrape_dt" does exist
+        # $set the element where "dt" does exist
         c = UpdateOne(
-            { 'apartment': apartment, 'unit': unit, 'terms.scrape_dt': scrape_dt },
-            { '$set': { "terms.$": { 'scrape_dt': scrape_dt, **terms } }}
+            { 'apartment': apartment, 'unit': unit, 'terms.dt': dt },
+            { '$set': { "terms.$": { 'dt': dt, 'price': terms } }}
         )
         
         # collect all the intended operations to be executed in bulk
