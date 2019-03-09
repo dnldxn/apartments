@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: scrapper-job-verge
+spec:
+  restartPolicy: Never
+  containers:
+  - name: apartments-api-verge
+    image: us.gcr.io/apartments-139902/apartments-api
+    command: ["the_verge.py"]
+    env:
+      - name: DB_HOST
+        value: "db-mongodb.default.svc.cluster.local"
+      - name: DB_PORT
+        value: "27017"
+      - name: DB_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: db-secret
+            key: mongodb-username
+      - name: DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: db-secret
+            key: mongodb-password
+      - name: DB_DATABASE
+        valueFrom:
+          secretKeyRef:
+            name: db-secret
+            key: mongodb-database
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: scrapper-job-ava
+spec:
+  restartPolicy: Never
+  containers:
+  - name: apartments-api-ava
+    image: us.gcr.io/apartments-139902/apartments-api
+    command: ["ava_pacific_beach.py"]
+    env:
+      - name: DB_HOST
+        value: "db-mongodb.default.svc.cluster.local"
+      - name: DB_PORT
+        value: "27017"
+      - name: DB_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: db-secret
+            key: mongodb-username
+      - name: DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: db-secret
+            key: mongodb-password
+      - name: DB_DATABASE
+        valueFrom:
+          secretKeyRef:
+            name: db-secret
+            key: mongodb-database

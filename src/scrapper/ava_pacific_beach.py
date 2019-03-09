@@ -49,7 +49,6 @@ for fp in two_bedroom:
 
             data['terms'].append({'k': length, 'v': price})
 
-
         listings.append(data)
 
 

@@ -17,6 +17,8 @@ new Vue({
       activeApartment: null,
       activeIndex: undefined,
       priceChart: undefined,
+      complexImg: undefined,
+      unitImg: undefined,
     }
   },
   mounted () {
@@ -27,7 +29,7 @@ new Vue({
         this.getApartment(this.apartments[0], 0);
       })
 
-    this.createChart("priceChart");
+    this.createChart("price_chart");
   },
   methods: {
     getApartment: function(apartment, index) {
@@ -36,6 +38,8 @@ new Vue({
       axios.get(`./listings/${apartment._id}`)
         .then(response => {
           this.activeApartment = response.data;
+
+          this.switchImages(this.activeApartment['apartment'], this.activeApartment['size'])
 
           const terms = response.data.terms;
           const labels = terms.map(x => x.dt);
@@ -94,6 +98,11 @@ new Vue({
       this.priceChart.data.labels = labels;
       this.priceChart.data.datasets = datasets;
       this.priceChart.update();
+    },
+    switchImages: function(apartment, size) {
+      const apartment_nm = apartment.toLowerCase().replace(/ /g, '_');
+      this.complexImg = `img/${apartment_nm}_complex.png`;
+      this.unitImg = `img/${apartment_nm}_${size}.png`;
     }
   }
 });

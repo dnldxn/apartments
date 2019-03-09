@@ -2,9 +2,6 @@
 
 ## TODO
 
-- Add complex map
-- Add floor
-- Add min price to list
 - Get scrapper working on k8s
 - Schedule scrapper with kron
 - MongoDB data backup

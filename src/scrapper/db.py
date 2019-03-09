@@ -20,12 +20,13 @@ def insert_results(apartment, dt, listings):
         unit = listing['unit']
         terms = listing['terms']
         size = listing['size']
+        floor = listing['floor']
         
         # attempt "upsert" where document does not exist
         # do not alter the document if this is an update
         a = UpdateOne(
             { 'apartment': apartment, 'unit': unit},
-            { '$setOnInsert': { 'size': size, 'terms': [{ 'dt': dt, 'price': terms }] }},
+            { '$setOnInsert': { 'size': size, 'floor': floor, 'terms': [{ 'dt': dt, 'price': terms }] }},
             upsert = True
         )
         

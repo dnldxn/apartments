@@ -52,7 +52,7 @@ app.get('/listings_count', (req, res) => {
 });
 
 app.get('/listings', (req, res) => {
-  db.collection('test').aggregate([
+  db.collection('listings').aggregate([
     { $sort: { "terms.scrape_date": -1 } },
     { $addFields: { minPrice: { $arrayElemAt: [ "$terms", -1 ] } } },
     { $addFields: { minPrice: { $min: "$minPrice.price.v" } } },
@@ -66,7 +66,7 @@ app.get('/listings', (req, res) => {
 app.get('/listings/:listingId', (req, res) => {
   const listingId = new ObjectID(req.params.listingId);
 
-  db.collection('test')
+  db.collection('listings')
     .findOne({'_id': listingId}, (err, result) => {
       if (err) throw err;
       res.send(result);

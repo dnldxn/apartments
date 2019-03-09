@@ -16,3 +16,5 @@ FROM base
 COPY --from=builder /install /usr/local
 WORKDIR /app
 COPY *.py /app/
+
+CMD ["python"]

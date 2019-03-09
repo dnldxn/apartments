@@ -16,7 +16,13 @@
         overflow-y: auto;
       }
       img {
-        height: 900px;
+        height: 750px;
+      }
+      #unit_img {
+        height: 500px;
+      }
+      #price_chart {
+        margin-top: 75px;
       }
     </style>
   </head>
@@ -27,7 +33,7 @@
         <div class="row" id="app">
             
           <!-- List group -->
-          <div class="col-3">
+          <div class="col-2">
             <div class="list-group">
               <a v-for="(a, index) in apartments"
                 class="list-group-item list-group-item-action"
@@ -36,16 +42,19 @@
                 href="#">
                 
                 <h5>{{a.apartment}} #{{a.unit}}</h5>
-                <small>Price: ${{a.minPrice}} Floor: {{a.floor}}</small>
+                <small>Price: ${{a.minPrice}} Sq Ft: {{a.size}} Floor: {{a.floor}}</small>
                 
               </a>
             </div>
           </div>
           
           <!-- Tab panes -->
-          <div class="col-9">
-            <img src="ava_pacific_beach_complex.png"></img>
-            <canvas id="priceChart" height="100"></canvas>
+          <div class="col-10">
+            <div class="row">
+              <img id="complex_img" v-bind:src="complexImg"></img>
+              <img id="unit_img" v-bind:src="unitImg"></img>
+            </div>
+            <canvas id="price_chart" height="100"></canvas>
             </ br></ br></ br></ br>
             {{ activeApartment }}
           </div>

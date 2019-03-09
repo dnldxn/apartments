@@ -10,8 +10,8 @@ import db
 APARTMENT = 'The Verge'
 
 FLOORPLANS = [
-    ('The Cusp', '17'),
-    ('Greenway', '18')
+    ('The Cusp', '17', 1020),
+    ('Greenway', '18', 1134)
 ]
 
 TODAY = str(date.today())
@@ -30,7 +30,8 @@ for fp in FLOORPLANS:
         data = {}
         data['floorplan'] = fp[0]
         data['unit'] = unit['data-unit']
-        data['floor'] = -1
+        data['floor'] = int(unit[1]) if unit[0] == '1' else int(unit[1]) - 2
+        data['size'] = fp[2]
         data['terms'] = []
         
         leases = unit.find_all('label')

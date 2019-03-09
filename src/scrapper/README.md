@@ -8,3 +8,12 @@ python3.6 theverge.py
 
 docker build -t apartments-scrapper .
 ```
+
+## Build on Google Build Engine
+
+```bash
+gcloud builds submit --tag us.gcr.io/apartments-139902/apartments-scrapper .
+
+# Clean up stored images to avoid recurring charges
+gcloud container images delete us.gcr.io/apartments-139902/apartments-scrapper --force-delete-tags
+```
