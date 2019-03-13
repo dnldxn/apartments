@@ -27,6 +27,25 @@ new Vue({
         this.apartments = response.data;
         
         this.getApartment(this.apartments[0], 0);
+        
+        let el = document.getElementsByClassName('sortable')[0];
+        this.sortable = Sortable.create(el, {
+          store: {
+            set: function(sortable) {
+              
+              const listings = Array.from(document.getElementsByClassName('list-group-item'));
+              const numListings = listings.length
+              
+              let orderObject = {};
+              [].forEach.call(listings, function (listing, i) {
+                const listingID = listing.getAttribute('data-id');
+                orderObject[listingID] = numListings - i;  // need to reverse the sort id order due to the way Mongo sorts nulls
+              });
+              
+              axios.post('./listings/sort', orderObject);
+            }
+          }
+        });
       })
 
     this.createChart("price_chart");
@@ -63,13 +82,10 @@ new Vue({
     },
     createChart: function(chartId) {
       const ctx = document.getElementById(chartId);
-      // Save reference
       this.priceChart = new Chart(ctx, {
         type: 'line',
         options: {
-        	plugins: {
-            colorschemes: { scheme: 'tableau.Tableau10' }
-          },
+        	plugins: { colorschemes: { scheme: 'tableau.Tableau10' } },
           scales: {
             yAxes: [{
               ticks: { 
@@ -78,9 +94,7 @@ new Vue({
               }
             }]
           },
-          elements: {
-            line: { fill: false }
-          },
+          elements: { line: { fill: false } },
           hover: {
             mode: 'nearest',
             intersect: false
@@ -94,7 +108,6 @@ new Vue({
       });
     },
     setData: function(labels, datasets) {
-      // Use reference
       this.priceChart.data.labels = labels;
       this.priceChart.data.datasets = datasets;
       this.priceChart.update();

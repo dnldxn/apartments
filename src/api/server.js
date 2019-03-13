@@ -1,6 +1,7 @@
 'use strict';
 
-const express = require('express')
+const express = require('express');
+const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
@@ -17,12 +18,14 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 
 // Express
 const app = express();
+app.use(bodyParser.json());
 app.use(express.static('public'));
 
 
 // MongoDB
 const url = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}`;
-var db;
+let db;
+let dbc;
 
 
 // Initialize DB Connection
@@ -30,6 +33,7 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client) {
   if(err) throw err;
 
   db = client.db(DB_DATABASE);
+  dbc = db.collection('listings');
 
   // Start the application after the database connection is ready
   app.listen(PORT, () => {
@@ -45,18 +49,18 @@ app.get('/ping', (req, res) => {
 });
 
 app.get('/listings_count', (req, res) => {
-  db.collection('listings').countDocuments({}, (err, result) => {
+  dbc.countDocuments({}, (err, result) => {
     if (err) throw err;
     res.send(`count: ${result}`);
   });
 });
 
 app.get('/listings', (req, res) => {
-  db.collection('listings').aggregate([
+  dbc.aggregate([
     { $sort: { "terms.scrape_date": -1 } },
     { $addFields: { minPrice: { $arrayElemAt: [ "$terms", -1 ] } } },
     { $addFields: { minPrice: { $min: "$minPrice.price.v" } } },
-  ]).sort({ apartment: 1, unit: 1 })
+  ]).sort({ sort: -1, apartment: 1, unit: 1 })
     .toArray( (err, result) => {
       if (err) throw err;
       res.send(result);
@@ -66,9 +70,26 @@ app.get('/listings', (req, res) => {
 app.get('/listings/:listingId', (req, res) => {
   const listingId = new ObjectID(req.params.listingId);
 
-  db.collection('listings')
-    .findOne({'_id': listingId}, (err, result) => {
+  dbc.findOne({'_id': listingId}, (err, result) => {
       if (err) throw err;
       res.send(result);
+  });
+});
+
+app.post('/listings/sort', (req, res) => {
+  
+  const sorts = req.body;
+
+  let bulk = dbc.initializeUnorderedBulkOp();
+  for(var id in sorts) {
+    const query = { _id: new ObjectID(id) };
+    const update = { $set: { sort: sorts[id] } };
+    
+    bulk.find(query).updateOne(update);
+  }
+  
+  bulk.execute(function(err, result) {
+    if (err) throw err;
+    res.send(result);
   });
 });

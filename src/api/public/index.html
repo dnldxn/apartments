@@ -19,10 +19,10 @@
         height: 750px;
       }
       #unit_img {
-        height: 500px;
+        height: 400px;
       }
       #price_chart {
-        margin-top: 75px;
+        margin-top: 30px;
       }
     </style>
   </head>
@@ -33,9 +33,10 @@
         <div class="row" id="app">
             
           <!-- List group -->
-          <div class="col-2">
-            <div class="list-group">
+          <div class="col-3">
+            <div class="list-group sortable">
               <a v-for="(a, index) in apartments"
+                v-bind:data-id="a._id"
                 class="list-group-item list-group-item-action"
                 v-bind:class="{ 'active': activeIndex === index }"
                 v-on:click="getApartment(a, index)"
@@ -49,13 +50,10 @@
           </div>
           
           <!-- Tab panes -->
-          <div class="col-10">
-            <div class="row">
-              <img id="complex_img" v-bind:src="complexImg"></img>
-              <img id="unit_img" v-bind:src="unitImg"></img>
-            </div>
+          <div class="col-9">
+            <img id="unit_img" v-bind:src="unitImg"></img>
             <canvas id="price_chart" height="100"></canvas>
-            </ br></ br></ br></ br>
+            <img id="complex_img" v-bind:src="complexImg"></img>
             {{ activeApartment }}
           </div>
         </div>
@@ -67,8 +65,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-colorschemes@latest/dist/chartjs-plugin-colorschemes.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="./app.js"></script>
-    <!--<script src="./chart.js"></script>-->
 
   </body>
 </html>

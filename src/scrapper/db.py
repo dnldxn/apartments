@@ -11,12 +11,11 @@ client = MongoClient(DB_HOST, DB_PORT, username=DB_USERNAME, password=DB_PASSWOR
 
 def insert_results(apartment, dt, listings):
     
-    collection = client[DB_DATABASE]['test']
+    collection = client[DB_DATABASE]['listings']
 
     db_operations = []
     for listing in listings:
         
-        # apartment = r['apartment']
         unit = listing['unit']
         terms = listing['terms']
         size = listing['size']

@@ -2,9 +2,14 @@
 
 ## TODO
 
+- Reactive layout
+- Add Avion to scrapper
 - Get scrapper working on k8s
 - Schedule scrapper with kron
 - MongoDB data backup
+- HTTPS
+- Log errors to Mongo
+- 
 
 ## Components
 

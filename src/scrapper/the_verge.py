@@ -30,7 +30,7 @@ for fp in FLOORPLANS:
         data = {}
         data['floorplan'] = fp[0]
         data['unit'] = unit['data-unit']
-        data['floor'] = int(unit[1]) if unit[0] == '1' else int(unit[1]) - 2
+        data['floor'] = int(data['unit'][1]) if data['unit'][0] == '1' else int(data['unit'][1]) - 2
         data['size'] = fp[2]
         data['terms'] = []
         
