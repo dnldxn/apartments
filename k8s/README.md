@@ -66,6 +66,16 @@ kubectl scale statefulset my-release-mongodb-secondary --replicas=3
 helm delete --purge db
 ```
 
+## Batch Job
+
+```bash
+# the batch job needs a Secret containing the details for a Google Cloud service account
+kubectl create secret generic service-account-key --from-file=./apartments-139902-key.json
+
+# deploy the cronjob.  the batch and scrapper images must be built and stored in the Google Registry first!
+kubectl apply -f scrapper.yml
+```
+
 ## API
 
 ```bash

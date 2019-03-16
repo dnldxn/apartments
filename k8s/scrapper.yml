@@ -1,63 +1,59 @@
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1beta1
+kind: CronJob
 metadata:
-  name: scrapper-job-verge
+  name: batch-cron-job
 spec:
-  restartPolicy: Never
-  containers:
-  - name: apartments-api-verge
-    image: us.gcr.io/apartments-139902/apartments-api
-    command: ["the_verge.py"]
-    env:
-      - name: DB_HOST
-        value: "db-mongodb.default.svc.cluster.local"
-      - name: DB_PORT
-        value: "27017"
-      - name: DB_USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: db-secret
-            key: mongodb-username
-      - name: DB_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: db-secret
-            key: mongodb-password
-      - name: DB_DATABASE
-        valueFrom:
-          secretKeyRef:
-            name: db-secret
-            key: mongodb-database
-
----
-
-apiVersion: v1
-kind: Pod
-metadata:
-  name: scrapper-job-ava
-spec:
-  restartPolicy: Never
-  containers:
-  - name: apartments-api-ava
-    image: us.gcr.io/apartments-139902/apartments-api
-    command: ["ava_pacific_beach.py"]
-    env:
-      - name: DB_HOST
-        value: "db-mongodb.default.svc.cluster.local"
-      - name: DB_PORT
-        value: "27017"
-      - name: DB_USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: db-secret
-            key: mongodb-username
-      - name: DB_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: db-secret
-            key: mongodb-password
-      - name: DB_DATABASE
-        valueFrom:
-          secretKeyRef:
-            name: db-secret
-            key: mongodb-database
+  # run daily at 1am
+  schedule: "0 1 * * *"
+  concurrencyPolicy: Forbid # if the old job is still running, forbid a new one from starting (should never happen)
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          # this needs to run on the persistant node in order to scale up the other node pool
+          tolerations:
+            - key: "ingress"
+              operator: "Equal"
+              value: "true"
+              effect: "NoExecute"
+          containers:
+          - name: apartments-batch
+            image: us.gcr.io/apartments-139902/apartments-batch
+            env:
+              - name: CLUSTER_NAME
+                value: "apartments"
+              - name: DB_HOST
+                value: "db-mongodb.default.svc.cluster.local"
+              - name: DB_PORT
+                value: "27017"
+              - name: DB_DATABASE
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret
+                    key: mongodb-database
+              - name: DB_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret
+                    key: mongodb-username
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret
+                    key: mongodb-password
+              - name: DB_DATABASE
+                valueFrom:
+                  secretKeyRef:
+                    name: db-secret
+                    key: mongodb-database
+            volumeMounts:
+            - name: key-json
+              # the following will mount the key.json file in the /app folder without overwriting the files that are already there
+              mountPath: "/app/apartments-139902-key.json"
+              subPath: "apartments-139902-key.json"
+              readOnly: true
+          volumes:
+          - name: key-json
+            secret:
+              secretName: service-account-key
