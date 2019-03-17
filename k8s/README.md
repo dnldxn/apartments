@@ -30,19 +30,19 @@ gcloud container node-pools create ingress-node-pool \
 --node-taints=ingress=true:NoExecute \
 --node-labels=ingress=true
 
+# setup kubectl to connect to the cluster
+gcloud container clusters get-credentials $CLUSTER_NAME
+
 # Firewall rules to allow port 80 and 443
 gcloud compute firewall-rules create ingress-firewall-rule --allow tcp:80,tcp:443 --source-ranges=0.0.0.0/0
 
-# Create Secret (make sure env variables are created first!)
+# Create Secret (make sure ENV variables are created first!)
 kubectl create secret generic db-secret \
 --from-literal=mongodb-root-password=$DB_ROOT_PASSWORD \
 --from-literal=mongodb-username=$DB_USERNAME \
 --from-literal=mongodb-password=$DB_PASSWORD \
 --from-literal=mongodb-database=$DB_DATABASE \
 --from-literal=mongodb-replica-set-key=$DB_REPLICA_SET_KEY
-
-# setup kubectl to connect to the cluster
-gcloud container clusters get-credentials $CLUSTER_NAME
 
 # Setup Helm's Tiller service account on the cluster
 kubectl create serviceaccount --namespace kube-system tiller
@@ -66,14 +66,12 @@ kubectl scale statefulset my-release-mongodb-secondary --replicas=3
 helm delete --purge db
 ```
 
-## Batch Job
+## Ingress
 
 ```bash
-# the batch job needs a Secret containing the details for a Google Cloud service account
-kubectl create secret generic service-account-key --from-file=./apartments-139902-key.json
+helm install --name nginx-ingress -f ingress-controller.yml stable/nginx-ingress
 
-# deploy the cronjob.  the batch and scrapper images must be built and stored in the Google Registry first!
-kubectl apply -f scrapper.yml
+helm delete --purge nginx-ingress
 ```
 
 ## API
@@ -82,12 +80,12 @@ kubectl apply -f scrapper.yml
 kubectl apply -f api.yml
 ```
 
-## Ingress
+## Batch Job
 
 ```bash
-kubectl apply -f ingress.yml
+# Secret containing the details for a Google Cloud service account.  Used by the batch Job.
+kubectl create secret generic service-account-key --from-file=./apartments-139902-key.json
 
-helm install --name nginx-ingress -f ingress-controller.yml stable/nginx-ingress
-
-helm delete --purge nginx-ingress
+# deploy the cronjob.  the batch and scrapper images must be built and stored in the Google Registry first!
+kubectl apply -f scrapper.yml
 ```

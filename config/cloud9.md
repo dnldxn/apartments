@@ -25,4 +25,5 @@ sudo apt-get install python3.6
 
 # Update Node version 
 nvm i v11
+nvm alias default 11
 ```

@@ -3,33 +3,32 @@
 ## Run Locally
 
 ```bash
+# Compile the frontend
+parcel build public/index.html
+
+# Start server
 npm install -g nodemon
 nodemon server.js
+
+# Setup Proxy to Remote Mongo DB (if needed)
+kubectl port-forward db-mongodb-primary-0 27017:27017
 ```
 
-## Build Locally
+## Build Docker Image Locally
 
 ```bash
-docker build -t apartments-api .
+# Build Image
+docker build -t us.gcr.io/apartments-139902/apartments-api .
 
-docker run --name api -d -p 5000:5000 apartments-api
+# Run Image Locally
+docker run --name api -d -p 5000:5000 us.gcr.io/apartments-139902/apartments-api
 
-# Configure docker to use the gcloud command-line tool as a credential helper
-gcloud auth configure-docker
-
-# Tag image with registry name
-docker tag apartments-api us.gcr.io/apartments-139902/apartments-api
+# Push to Google Registry
 docker push us.gcr.io/apartments-139902/apartments-api
 gcloud container images list-tags
 
 # Clean up stored images to avoid recurring charges
 gcloud container images delete us.gcr.io/apartments-139902/apartments-api --force-delete-tags
-```
-
-## Debug with remote MongoDB
-
-```bash
-kubectl port-forward db-mongodb-primary-0 27017:27017
 ```
 
 ## Build on Google Build Engine
@@ -39,10 +38,4 @@ gcloud builds submit --tag us.gcr.io/apartments-139902/apartments-api .
 
 # Clean up stored images to avoid recurring charges
 gcloud container images delete us.gcr.io/apartments-139902/apartments-api --force-delete-tags
-```
-
-## Bundling
-
-```bash
-npm install -g parcel-bundler
 ```

@@ -19,7 +19,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 // Express
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static('./dist'));
 
 
 // MongoDB

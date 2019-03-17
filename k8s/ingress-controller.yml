@@ -3,12 +3,10 @@ controller:
   
   service:
     type: ClusterIP
+    
+    # This needs to be the INTERNAL-IP of the Ingress Node (kubectl get nodes)
     externalIPs: 
-      - 10.138.0.31
-
-  ## Use host ports 80 and 443
-#   daemonset:
-#     useHostPort: true
+      - 10.138.15.193
 
   tolerations:
     - key: "ingress"

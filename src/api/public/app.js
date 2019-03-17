@@ -1,3 +1,12 @@
+const img = require("./img/*.png");
+
+import Vue from 'vue';
+import axios from 'axios';
+import Sortable from 'sortablejs';
+import Chart from 'chart.js';
+import 'chartjs-plugin-colorschemes';
+
+
 // Helper Function
 function covertCurrencyString(value) {
   return value.toLocaleString("en-US", { 
@@ -7,6 +16,7 @@ function covertCurrencyString(value) {
     maximumFractionDigits: 0
   })
 }
+
 
 // Vue
 new Vue({
@@ -34,7 +44,7 @@ new Vue({
             set: function(sortable) {
               
               const listings = Array.from(document.getElementsByClassName('list-group-item'));
-              const numListings = listings.length
+              const numListings = listings.length;
               
               let orderObject = {};
               [].forEach.call(listings, function (listing, i) {
@@ -51,6 +61,7 @@ new Vue({
     this.createChart("price_chart");
   },
   methods: {
+    
     getApartment: function(apartment, index) {
       this.activeIndex = index;
     
@@ -80,6 +91,7 @@ new Vue({
           this.setData(labels, datasets2);
         });
     },
+    
     createChart: function(chartId) {
       const ctx = document.getElementById(chartId);
       this.priceChart = new Chart(ctx, {
@@ -107,15 +119,17 @@ new Vue({
         }
       });
     },
+    
     setData: function(labels, datasets) {
       this.priceChart.data.labels = labels;
       this.priceChart.data.datasets = datasets;
       this.priceChart.update();
     },
+    
     switchImages: function(apartment, size) {
       const apartment_nm = apartment.toLowerCase().replace(/ /g, '_');
-      this.complexImg = `img/${apartment_nm}_complex.png`;
-      this.unitImg = `img/${apartment_nm}_${size}.png`;
+      this.complexImg = img[`${apartment_nm}_complex`];
+      this.unitImg = img[`${apartment_nm}_${size}`];
     }
   }
 });

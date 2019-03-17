@@ -9,3 +9,7 @@ apartments-139902*.json
 
 # Password file
 secrets.sh
+
+# Output from bundler
+.cache/
+dist/
