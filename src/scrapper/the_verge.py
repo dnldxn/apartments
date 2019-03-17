@@ -40,7 +40,8 @@ for fp in FLOORPLANS:
             length = r.group(1)
             price = int(r.group(2))
             
-            data['terms'].append({'k': length, 'v': price})
+            if int(length) > 5:
+                data['terms'].append({'k': length, 'v': price})
         
         listings.append(data)
 

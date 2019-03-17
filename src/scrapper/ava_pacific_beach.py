@@ -47,7 +47,8 @@ for fp in two_bedroom:
             length = re.sub('[^0-9]', '', td_elements[0].text)  # regex to remove all non-digits
             price = int(re.sub('[^0-9]', '',  td_elements[-1].text)) # regex to remove all non-digits
 
-            data['terms'].append({'k': length, 'v': price})
+            if int(length) > 5:
+                data['terms'].append({'k': length, 'v': price})
 
         listings.append(data)
 
