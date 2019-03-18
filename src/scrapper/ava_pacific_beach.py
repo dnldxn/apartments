@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from requests import get
 import re
-from datetime import date
+from datetime import date, datetime
 
 import db
 
@@ -28,8 +28,14 @@ for fp in two_bedroom:
         data['floorplan'] = 'TODO'
         data['unit'] = a['apartmentNumber']
         data['floor'] = a['floor']
-        data['terms'] = []
+        data['beds'] = a['beds']
+        data['baths'] = a['baths']
 
+        # available date
+        epoch_str = re.search('/Date\((\d+)\)/', a['pricing']['availableDate']).group(1)
+        data['available_dt'] = datetime.fromtimestamp(int(epoch_str) / 1000.0).strftime('%Y-%m-%d')
+        
+        # go to subpage to get more details
         apartment_code = a['apartmentCode']
         url = 'https://www.avaloncommunities.com/california/san-diego-apartments/ava-pacific-beach/apartment/' + apartment_code
 
@@ -39,7 +45,9 @@ for fp in two_bedroom:
         description_el = soup.find('div', {'class': 'description'})
         data['size'] = int(re.search(r'(\d+) sq ft', description_el.text).group(1))
 
+        # terms
         leases = soup.find('div', {'class': 'terms'}).select('table')[0].findAll('tr')
+        data['terms'] = []
         for lease in leases:
             
             td_elements = lease.select('td')
@@ -52,6 +60,6 @@ for fp in two_bedroom:
 
         listings.append(data)
 
-
+print(listings)
 # Insert into database
-db.insert_results(APARTMENT, TODAY, listings)
+#db.insert_results(APARTMENT, TODAY, listings)
