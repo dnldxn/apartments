@@ -18,13 +18,61 @@ function covertCurrencyString(value) {
 }
 
 
+// Apartment List Item Component
+Vue.component('apartment-list-item', {
+  props: {
+    apt: Object
+  },
+  template: `
+    <a
+      v-bind:data-id="apt._id"
+      class="list-group-item list-group-item-action"
+      v-bind:class="{ 'list-group-item-danger': apt.display === false }"
+      v-on:click="selectApartment"
+      href="#">
+        <div class="row">
+          <h5 class="col-11">{{apt.apartment}} #{{apt.unit}}</h5>
+          <button type="button" class="col-1 close float-right" v-on:click.stop="closeButtonClicked">
+            <span>&times;</span>
+          </button>
+        </div>
+        <small>Price: \${{apt.minPrice}} Sq Ft: {{apt.size}} Floor: {{apt.floor}} Available: {{apt.available_dt}}</small>
+    </a>
+  `,
+  methods: {
+    selectApartment() {
+      this.$emit('apartment-selected');
+    },
+    closeButtonClicked() {
+      this.$emit('apartment-close-clicked');
+    }
+  }
+});
+
+
+// Apartment Details Pane
+Vue.component('apartment-details', {
+  props: {
+    unitImg: String,
+    complexImg: String
+  },
+  template: `
+    <div class="col-7 col-md-9">
+      <img id="unit_img" v-bind:src="unitImg"></img>
+      <canvas id="price_chart" height="100"></canvas>
+      <img id="complex_img" v-bind:src="complexImg"></img>
+    </div>
+  `
+});
+
+
+
 // Vue
 new Vue({
   el: '#app',
   data () {
     return {
       apartments: null,
-      activeApartment: null,
       activeIndex: undefined,
       priceChart: undefined,
       complexImg: undefined,
@@ -36,10 +84,13 @@ new Vue({
       .then(response => {
         this.apartments = response.data;
         
-        this.getApartment(this.apartments[0], 0);
+        // By default, select the first apartment in the list
+        this.getApartment(0, this.apartments[0]._id);
         
+        // Setup the sortable list
         let el = document.getElementsByClassName('sortable')[0];
         this.sortable = Sortable.create(el, {
+          delay: 100,   // time in milliseconds to define when the sorting should start
           store: {
             set: function(sortable) {
               
@@ -62,16 +113,17 @@ new Vue({
   },
   methods: {
     
-    getApartment: function(apartment, index) {
+    getApartment: function(index) {
       this.activeIndex = index;
-    
-      axios.get(`./listings/${apartment._id}`)
+      const apartment_id = this.apartments[index]._id;
+      
+      axios.get(`./listings/${apartment_id}`)
         .then(response => {
-          this.activeApartment = response.data;
+          const activeApartment = response.data;
 
-          this.switchImages(this.activeApartment['apartment'], this.activeApartment['size'])
+          this.switchImages(activeApartment['apartment'], activeApartment['size'])
 
-          const terms = response.data.terms;
+          const terms = activeApartment.terms;
           const labels = terms.map(x => x.dt);
           
           // collect the keys (term length) and prices (over time)
@@ -90,6 +142,16 @@ new Vue({
 
           this.setData(labels, datasets2);
         });
+    },
+    
+    toggleApartmentDisplay: function(hideIndex) {
+      const apartment = this.apartments[hideIndex];
+      
+      const current = apartment['display'];
+      const next = !current;
+      
+      apartment['display'] = next;  // update UI
+      axios.post(`./listings/${apartment._id}/hide`, {'display': next});  // update DB
     },
     
     createChart: function(chartId) {

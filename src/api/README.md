@@ -3,15 +3,15 @@
 ## Run Locally
 
 ```bash
-# Compile the frontend
-parcel build public/index.html
-
-# Start server
-npm install -g nodemon
-nodemon server.js
+# Run in separate window to hot reload the frontend
+NODE_ENV=development parcel watch public/index.html
 
 # Setup Proxy to Remote Mongo DB (if needed)
 kubectl port-forward db-mongodb-primary-0 27017:27017
+
+# Start server
+npm install -g nodemon # only run once
+nodemon server.js
 ```
 
 ## Build Docker Image Locally

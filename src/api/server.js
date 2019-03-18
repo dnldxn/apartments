@@ -70,9 +70,22 @@ app.get('/listings', (req, res) => {
 app.get('/listings/:listingId', (req, res) => {
   const listingId = new ObjectID(req.params.listingId);
 
-  dbc.findOne({'_id': listingId}, (err, result) => {
+  dbc.findOne({ '_id': listingId }, (err, result) => {
       if (err) throw err;
       res.send(result);
+  });
+});
+
+app.post('/listings/:listingId/hide', (req, res) => {
+  const listingId = new ObjectID(req.params.listingId);
+  const display = req.body['display'];
+
+  dbc.updateOne(
+    { '_id': listingId }, 
+    { $set: { "display" : display } }, 
+    (err, result) => {
+      if (err) throw err;
+      res.send("success");
   });
 });
 

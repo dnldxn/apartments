@@ -11,6 +11,10 @@
 
     <!-- Custom style -->
     <style>
+      .list-group, .tab-pane {
+        max-height: 100vh;
+        overflow-y: auto;
+      }
       .list-group {
         max-height: 100vh;
         overflow-y: auto;
@@ -33,29 +37,26 @@
         <div class="row" id="app">
             
           <!-- List group -->
-          <div class="col-3">
+          <div class="col-5 col-md-3">
             <div class="list-group sortable">
-              <a v-for="(a, index) in apartments"
-                v-bind:data-id="a._id"
-                class="list-group-item list-group-item-action"
+              <apartment-list-item 
+                v-for="(apt, index) in apartments"
+                v-bind:key="apt._id"
+                v-bind:apt="apt"
+                v-bind:index="index"
                 v-bind:class="{ 'active': activeIndex === index }"
-                v-on:click="getApartment(a, index)"
-                href="#">
-                
-                <h5>{{a.apartment}} #{{a.unit}}</h5>
-                <small>Price: ${{a.minPrice}} Sq Ft: {{a.size}} Floor: {{a.floor}} Available: {{a.available_dt}}</small>
-                
-              </a>
+                @apartment-selected="getApartment(index)"
+                @apartment-close-clicked="toggleApartmentDisplay(index)"
+              ></apartment-list-item>
             </div>
           </div>
-          
+
           <!-- Tab panes -->
-          <div class="col-9">
-            <img id="unit_img" v-bind:src="unitImg"></img>
-            <canvas id="price_chart" height="100"></canvas>
-            <img id="complex_img" v-bind:src="complexImg"></img>
-            {{ activeApartment }}
-          </div>
+          <apartment-details 
+            class="tab-pane col-7 col-md-9"
+            v-bind:unit-img="unitImg"
+            v-bind:complex-img="complexImg"
+          ></apartment-details>
         </div>
       </div>
 
