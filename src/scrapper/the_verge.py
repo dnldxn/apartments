@@ -66,6 +66,6 @@ for fp in FLOORPLANS:
 
         listings.append(data)
 
-print(listings)
+
 # Insert into database
-# db.insert_results(APARTMENT, TODAY, listings)
+db.insert_results(APARTMENT, TODAY, listings)
