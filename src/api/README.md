@@ -21,7 +21,7 @@ kubectl port-forward db-mongodb-primary-0 27017:27017
 docker build -t us.gcr.io/apartments-139902/apartments-api .
 
 # Run Image Locally
-docker run --name api -d -p 5000:5000 us.gcr.io/apartments-139902/apartments-api
+docker run --name api -it -p 5000:5000 us.gcr.io/apartments-139902/apartments-api
 
 # Push to Google Registry
 docker push us.gcr.io/apartments-139902/apartments-api

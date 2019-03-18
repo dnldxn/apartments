@@ -18,14 +18,17 @@ def insert_results(apartment, dt, listings):
         
         unit = listing['unit']
         terms = listing['terms']
-        size = listing['size']
-        floor = listing['floor']
+        size = int(listing.get('size', -1))
+        floor = int(listing.get('floor', -1))
+        beds = int(listing.get('beds', -1))
+        baths = float(listing.get('baths', -1.0))
+        available_dt = str(listing.get('available_dt', '1900-01-01'))
         
         # attempt "upsert" where document does not exist
         # do not alter the document if this is an update
         a = UpdateOne(
             { 'apartment': apartment, 'unit': unit},
-            { '$setOnInsert': { 'size': size, 'floor': floor, 'terms': [{ 'dt': dt, 'price': terms }] }},
+            { '$setOnInsert': { 'size': size, 'floor': floor, 'beds': beds, 'baths': baths, 'available_dt': available_dt, 'terms': [{ 'dt': dt, 'price': terms }] }},
             upsert = True
         )
         
