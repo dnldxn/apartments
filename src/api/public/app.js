@@ -1,4 +1,5 @@
 const img = require("./img/*.png");
+const pdf = require("./img/*.pdf");
 
 import Vue from 'vue';
 import axios from 'axios';
@@ -36,7 +37,9 @@ Vue.component('apartment-list-item', {
             <span>&times;</span>
           </button>
         </div>
-        <small>Price: \${{apt.minPrice}} Sq Ft: {{apt.size}} Floor: {{apt.floor}} Available: {{apt.available_dt}}</small>
+        <h6>\${{apt.minPrice}}</h6>
+        <br />
+        <small>Sq Ft: <b>{{apt.size}}</b> Floor: <b>{{apt.floor}}</b> Available: <b>{{apt.available_dt}}</b></small>
     </a>
   `,
   methods: {
@@ -54,13 +57,15 @@ Vue.component('apartment-list-item', {
 Vue.component('apartment-details', {
   props: {
     unitImg: String,
-    complexImg: String
+    complexImg: String,
+    complexPDF: String
   },
   template: `
     <div class="col-7 col-md-9">
       <img id="unit_img" v-bind:src="unitImg"></img>
       <canvas id="price_chart" height="100"></canvas>
       <img id="complex_img" v-bind:src="complexImg"></img>
+      <embed v-bind:src="complexPDF" width="600" height="500" alt="pdf">
     </div>
   `
 });
@@ -76,6 +81,7 @@ new Vue({
       activeIndex: undefined,
       priceChart: undefined,
       complexImg: undefined,
+      complexPDF: undefined,
       unitImg: undefined,
     }
   },
@@ -191,6 +197,7 @@ new Vue({
     switchImages: function(apartment, size) {
       const apartment_nm = apartment.toLowerCase().replace(/ /g, '_');
       this.complexImg = img[`${apartment_nm}_complex`];
+      this.complexPDF = pdf[`${apartment_nm}_complex`];
       this.unitImg = img[`${apartment_nm}_${size}`];
     }
   }
