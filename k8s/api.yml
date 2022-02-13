@@ -66,7 +66,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: apartments.dixon.xyz
+  - host: casa.dixon.xyz
     http:
       paths:
       - path: /

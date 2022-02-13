@@ -22,6 +22,7 @@ replicaSet:
   enabled: true
   useHostnames: true
 
+## Enable persistence using Persistent Volume Claims
 persistence:
   enabled: true
   accessModes:

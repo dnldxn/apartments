@@ -1,12 +1,13 @@
 # Apartments
 
-## TODO
+This is a project I built to automatically scrape several apartment website and track the information over time.  It has several components:
 
-- MongoDB data backup
-- HTTPS
-- Log errors to Mongo
+1. Scrapper to pull data automatically from several different websites
+2. Mongo database to store the data
+3. API to serve the data
+4. Web UI
 
-## Components
+## Technologies
 
 - GKE for managed K8s
 - Python scrapper
@@ -17,15 +18,15 @@
 - ? for docker image storage
 - Drone (runs inside Kubernetes) for CI
 
-## Order of Deployment
+## Deployment Order
 
 1. Set environment variables
-2. Cluster
-3. Ingress Pool
+2. Create GCP Cluster
+3. Cteate Ingress Pool
 4. Create firewall rule
-5. Secrets
+5. K8s Apply Secrets
 6. Install MongoDB through Helm
-7. API
+7. Deploy API service
 8. Create Ingress
 9. Update Ingress Controller's Helm values.yml to point to the Ingress internal IP address
 10. Install Ingress Controller through Helm
